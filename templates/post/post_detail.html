@@ -1,0 +1,9 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="post">
+    <h3>{{post.title}}</h3>
+    <p>{{post.body}}</p>
+    <p>{{post.author }} > {{post.created}}</p>
+</div>
+{% endblock content %}
