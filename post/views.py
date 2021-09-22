@@ -1,15 +1,10 @@
-from django.shortcuts import redirect, reverse
-from django.views import generic
 from django.http import Http404
-from post.models import Post, Category
-from post.forms import PostCreateForm
+from django.shortcuts import redirect, reverse
+from django.urls import reverse_lazy
+from django.views import generic
 
-#__all__ = [
-#     'View', 'TemplateView', 'RedirectView', 'ArchiveIndexView',
-#     'YearArchiveView', 'MonthArchiveView', 'WeekArchiveView', 'DayArchiveView',
-#     'TodayArchiveView', 'DateDetailView', 'DetailView', 'FormView',
-#     'CreateView', 'UpdateView', 'DeleteView', 'ListView', 'GenericViewError',
-# ]
+from post.forms import PostForm
+from post.models import Post, Category
 
 
 class PostListView(generic.ListView):
@@ -40,7 +35,7 @@ class PostDetailView(generic.DetailView):
 
 class PostCreateView(generic.CreateView):
     model = Post
-    form_class = PostCreateForm
+    form_class = PostForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -49,3 +44,29 @@ class PostCreateView(generic.CreateView):
             'category_slug': form.instance.category.slug,
             'post_slug': form.instance.slug
         }))
+
+
+class PostUpdateView(generic.UpdateView):
+    model = Post
+    form_class = PostForm
+    slug_url_kwarg = 'post_slug'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.save()
+        return redirect(reverse("post:post-detail", kwargs={
+            'category_slug': form.instance.category.slug,
+            'post_slug': form.instance.slug
+        }))
+
+
+class PostDeleteView(generic.DeleteView):
+    model = Post
+    context_object_name = "post"
+    slug_url_kwarg = "post_slug"
+
+    def get_success_url(self):
+        post = Post.objects.get(slug=self.kwargs[self.slug_url_kwarg])
+        return reverse_lazy('post:post-list', kwargs={
+            'category_slug': post.category.slug
+        })

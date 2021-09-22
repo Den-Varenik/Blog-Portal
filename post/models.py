@@ -1,7 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 from model_utils import FieldTracker
 
 
@@ -28,8 +28,11 @@ class Post(models.Model):
 
     tracker = FieldTracker()
 
+    class Meta:
+        ordering = ["id"]
+
     def __str__(self) -> str:
         return str(self.title)
 
     def get_absolute_url(self) -> str:
-        pass
+        return reverse('post:post-detail', args=[self.category.slug, self.slug])
