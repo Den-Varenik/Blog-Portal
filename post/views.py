@@ -11,11 +11,11 @@ class PostListView(generic.ListView):
     model = Post
     context_object_name = "posts"
     slug_url_kwarg = 'category_slug'
-    paginate_by = 1
+    paginate_by = 3
 
     def get_queryset(self):
         category_slug = self.kwargs[self.slug_url_kwarg]
-        return Post.objects.filter(category__slug=category_slug)
+        return Post.objects.filter(category__slug=category_slug).select_related('author').select_related('category')
 
 
 class PostDetailView(generic.DetailView):
@@ -23,6 +23,10 @@ class PostDetailView(generic.DetailView):
     slug_url_kwarg = 'post_slug'
     context_object_name = "post"
     category = None
+
+    def get_queryset(self, *args, **kwargs):
+        post_slug = self.kwargs[self.slug_url_kwarg]
+        return Post.objects.filter(slug=post_slug).select_related('author')
 
     def get(self, request, *args, **kwargs):
         category_slug = kwargs['category_slug']
