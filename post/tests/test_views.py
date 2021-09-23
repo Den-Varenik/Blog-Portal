@@ -58,11 +58,52 @@ class PostTestCases(TestCase):
     def test_post_create_POST(self):  # TODO
         pass
 
-    def test_post_update(self):  # TODO
+    def test_post_update_GET(self):  # TODO
+        request = self.factory.get('')
+
+        request.user = self.user
+        response = views.PostUpdateView.as_view()(request, post_slug=self.post.slug)
+        self.assertEquals(response.status_code, 200)
+
+        # request.user = AnonymousUser()
+        # response = views.PostUpdateView.as_view()(request, post_slug=self.post.slug)
+        # self.assertEquals(response.status_code, 405)
+
+    def test_post_update_PUT(self):  # TODO
         pass
 
-    def test_post_delete(self):  # TODO
+    def test_post_delete_GET(self):  # TODO
+        request = self.factory.get('')
+
+        request.user = self.user
+        response = views.PostDeleteView.as_view()(request, post_slug=self.post.slug)
+        self.assertEquals(response.status_code, 200)
+
+        # request.user = AnonymousUser()
+        # response = views.PostDeleteView.as_view()(request, post_slug=self.post.slug)
+        # self.assertEquals(response.status_code, 405)
+
+    def test_post_delete_DELETE(self):  # TODO
         pass
 
-    def test_category_list(self):  # TODO
-        pass
+    def test_category_list_GET(self):
+        request = self.factory.get('')
+
+        request.user = self.user
+        response = views.PostListView.as_view()(request, category_slug=self.category.slug)
+        self.assertEquals(response.status_code, 200)
+
+        request.user = AnonymousUser()
+        response = views.PostListView.as_view()(request, category_slug=self.category.slug)
+        self.assertEquals(response.status_code, 200)
+
+    def test_category_list_POST(self):
+        request = self.factory.post('')
+
+        request.user = self.user
+        response = views.PostListView.as_view()(request, category_slug=self.category.slug)
+        self.assertEquals(response.status_code, 405)
+
+        request.user = AnonymousUser()
+        response = views.PostListView.as_view()(request, category_slug=self.category.slug)
+        self.assertEquals(response.status_code, 405)
