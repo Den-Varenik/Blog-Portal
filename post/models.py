@@ -1,5 +1,8 @@
+import os
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from model_utils import FieldTracker
@@ -36,3 +39,10 @@ class Post(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse('post:post-detail', args=[self.category.slug, self.slug])
+
+
+@receiver(models.signals.post_delete, sender=Post)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.img:
+        if os.path.isfile(instance.img.path):
+            os.remove(instance.img.path)
