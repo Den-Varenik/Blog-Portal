@@ -16,7 +16,7 @@ class UserCreateView(generic.CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('/')
+        return redirect('home:index')
 
 
 class UserLoginView(LoginView):
@@ -24,10 +24,10 @@ class UserLoginView(LoginView):
     template_name = 'account/user_form.html'
 
     def get_success_url(self):
-        return reverse_lazy("post:post-list")
+        return reverse_lazy("home:index")
 
 
 @login_required
 def logout_user(request):
     logout(request)
-    return redirect('login')
+    return redirect('account:login')
