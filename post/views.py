@@ -2,6 +2,7 @@ from django.http import Http404
 from django.shortcuts import redirect, reverse
 from django.urls import reverse_lazy
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from post.forms import PostForm
 from post.models import Post, Category
@@ -37,9 +38,10 @@ class PostDetailView(generic.DetailView):
         return super().get(request, *args, **kwargs)
 
 
-class PostCreateView(generic.CreateView):
+class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
     form_class = PostForm
+    login_url = reverse_lazy('account:login')
 
     def form_valid(self, form):
         form.instance.author = self.request.user

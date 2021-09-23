@@ -51,9 +51,9 @@ class PostTestCases(TestCase):
         response = views.PostCreateView.as_view()(request)
         self.assertEquals(response.status_code, 200)
 
-        # request.user = AnonymousUser()
-        # response = views.PostCreateView.as_view()(request)
-        # self.assertEquals(response.status_code, 405)
+        request.user = AnonymousUser()
+        response = views.PostCreateView.as_view()(request)
+        self.assertEquals(response.status_code, 302)
 
     def test_post_create_POST(self):  # TODO
         pass

@@ -7,6 +7,7 @@ urlpatterns = [
     url(settings.ADMIN_URL, admin.site.urls),
     url(r"^", include(("home.urls", "home"), namespace="home")),
     url(r"^post/", include(("post.urls", "post"), namespace="post")),
+    url(r"^account/", include(("account.urls", "account"), namespace="account")),
 ]
 
 if settings.DEBUG:
