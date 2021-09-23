@@ -52,7 +52,7 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
         }))
 
 
-class PostUpdateView(generic.UpdateView):
+class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Post
     form_class = PostForm
     slug_url_kwarg = 'post_slug'
@@ -66,7 +66,7 @@ class PostUpdateView(generic.UpdateView):
         }))
 
 
-class PostDeleteView(generic.DeleteView):
+class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Post
     context_object_name = "post"
     slug_url_kwarg = "post_slug"
