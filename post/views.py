@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from post.forms import PostForm
 from post.models import Post, Category
+from post.mixins import IsAuthorOrAdminMixin
 
 
 class PostListView(generic.ListView):
@@ -24,10 +25,6 @@ class PostDetailView(generic.DetailView):
     slug_url_kwarg = 'post_slug'
     context_object_name = "post"
     category = None
-
-    def get_queryset(self, *args, **kwargs):
-        post_slug = self.kwargs[self.slug_url_kwarg]
-        return Post.objects.filter(slug=post_slug).select_related('author')
 
     def get(self, request, *args, **kwargs):
         category_slug = kwargs['category_slug']
@@ -52,7 +49,7 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
         }))
 
 
-class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
+class PostUpdateView(IsAuthorOrAdminMixin, generic.UpdateView):
     model = Post
     form_class = PostForm
     slug_url_kwarg = 'post_slug'
@@ -66,7 +63,7 @@ class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
         }))
 
 
-class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
+class PostDeleteView(IsAuthorOrAdminMixin, generic.DeleteView):
     model = Post
     context_object_name = "post"
     slug_url_kwarg = "post_slug"
