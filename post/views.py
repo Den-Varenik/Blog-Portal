@@ -1,12 +1,15 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import redirect, reverse
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from post.forms import PostForm
-from post.models import Post, Category, Author
+from braces.views import JSONResponseMixin, AjaxResponseMixin
+from post.forms import PostForm, CommentForm
+from post.models import Post, Category, Author, Comment, Like
 from post.mixins import IsAuthorOrAdminMixin
+
+from json import loads
 
 
 class PostListView(generic.ListView):
@@ -20,11 +23,19 @@ class PostListView(generic.ListView):
         return Post.objects.filter(category__slug=category_slug).select_related('author').select_related('category')
 
 
-class PostDetailView(generic.DetailView):
+class PostDetailView(AjaxResponseMixin, JSONResponseMixin, generic.DetailView):
     model = Post
     slug_url_kwarg = 'post_slug'
     context_object_name = "post"
     category = None
+    http_method_names = ('get', 'post',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comment_form"] = CommentForm
+        slug = self.kwargs[self.slug_url_kwarg]
+        context["comments"] = Comment.objects.filter(post__slug=slug)
+        return context
 
     def get(self, request, *args, **kwargs):
         category_slug = kwargs['category_slug']
@@ -33,6 +44,28 @@ class PostDetailView(generic.DetailView):
         except Category.DoesNotExist:
             raise Http404
         return super().get(request, *args, **kwargs)
+
+    def post_ajax(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            data_request = loads(request.read().decode('utf-8'))
+
+            if "comment" in data_request and data_request["comment"] != '':
+                slug = self.kwargs[self.slug_url_kwarg]
+                post = Post.objects.get(slug=slug)
+
+                if post is not None:
+                    comment = Comment.objects.create(user=request.user, post=post, text=data_request["comment"])
+                    comment.save()
+                    data = {
+                        'user': comment.user.username,
+                        'active': comment.active,
+                        'comment': comment.text,
+                        'updated': comment.updated
+                    }
+                    return self.render_json_response(data)
+        response = JsonResponse({"errors": "Ups, something go wrong..."})
+        response.status_code = 405
+        return response
 
 
 class PostCreateView(LoginRequiredMixin, generic.CreateView):

@@ -5,5 +5,49 @@
     <h3>{{post.title}}</h3>
     <p>{{post.body}}</p>
     <p>{{post.author }} > {{post.created}}</p>
+
+    <br>
+    <div class="commentForm">
+        {% csrf_token %}
+
+        {{ comment_form.as_p }}
+        <button type="submit" id="submit">Submit</button>
+    </div>
+    <div class="comments">
+        {% for comment in comments %}
+        <div class="comment">
+            <h4>{{comment.user}} -> {{comment.updated}}</h4>
+            <p>{{comment.text}}</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+    const url = document.URL;
+
+    document.getElementById('commentForm').addEventListener('submit', function () {
+        let comment = document.getElementById('id_text').value;
+        let csrf = document.getElementsByName('csrfmiddlewaretoken');
+        let csrfValue = csrf[0].value;
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            headers: {
+                "X-CSRFToken": csrfValue,
+            },
+            data: JSON.stringify({"comment": comment}),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors);
+            }
+        });
+    });
+</script>
+{% endblock javascript %}

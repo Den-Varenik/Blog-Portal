@@ -26,6 +26,7 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     'debug_toolbar',
+    "corsheaders",
 )
 
 LOCAL_APPS = (
@@ -39,6 +40,7 @@ ADMIN_URL = r'^admin/'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -116,3 +118,5 @@ def show_toolbar(request):
 
 
 DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": show_toolbar}
+
+CORS_ALLOW_ALL_ORIGINS = True

@@ -56,3 +56,18 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.img:
         if os.path.isfile(instance.img.path):
             os.remove(instance.img.path)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="comment", on_delete=models.CASCADE)
+    text = models.TextField(_("Comment"))
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="like", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
