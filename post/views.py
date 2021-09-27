@@ -5,7 +5,7 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from post.forms import PostForm
-from post.models import Post, Category
+from post.models import Post, Category, Author
 from post.mixins import IsAuthorOrAdminMixin
 
 
@@ -41,7 +41,9 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
     login_url = reverse_lazy('account:login')
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        author = Author.objects.get(user=self.request.user)
+
+        form.instance.author = author
         form.save()
         return redirect(reverse("post:post-detail", kwargs={
             'category_slug': form.instance.category.slug,
@@ -55,7 +57,9 @@ class PostUpdateView(IsAuthorOrAdminMixin, generic.UpdateView):
     slug_url_kwarg = 'post_slug'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        author = Author.objects.get(user=self.request.user)
+
+        form.instance.author = author
         form.save()
         return redirect(reverse("post:post-detail", kwargs={
             'category_slug': form.instance.category.slug,

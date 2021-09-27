@@ -8,6 +8,16 @@ from django.utils.translation import ugettext_lazy as _
 from model_utils import FieldTracker
 
 
+class Author(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    alias = models.CharField(_("Alias"), max_length=50)
+    first_name = models.CharField(_("Name"), max_length=50, null=True, blank=True)
+    second_name = models.CharField(_("Surname"), max_length=50, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return str(self.alias)
+
+
 class Category(models.Model):
     name = models.CharField(_('Category'), max_length=200)
     slug = models.SlugField(_("Slug"), unique=True)
@@ -20,7 +30,7 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, related_name="post", on_delete=models.CASCADE)
     title = models.CharField(_("Title"), max_length=50)
     slug = models.SlugField(_("Slug"), unique=True)
     body = models.TextField(_("Text"))
