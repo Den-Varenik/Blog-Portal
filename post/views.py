@@ -20,7 +20,9 @@ class PostListView(generic.ListView):
 
     def get_queryset(self):
         category_slug = self.kwargs[self.slug_url_kwarg]
-        return Post.objects.filter(category__slug=category_slug).select_related('author').select_related('category')
+        return Post.objects.filter(category__slug=category_slug)\
+                           .select_related('author', 'category')\
+                           .prefetch_related('like')
 
 
 class PostDetailView(AjaxResponseMixin, JSONResponseMixin, generic.DetailView):
@@ -34,7 +36,7 @@ class PostDetailView(AjaxResponseMixin, JSONResponseMixin, generic.DetailView):
         context = super().get_context_data(**kwargs)
         context["comment_form"] = CommentForm
         slug = self.kwargs[self.slug_url_kwarg]
-        context["comments"] = Comment.objects.filter(post__slug=slug)
+        context["comments"] = Comment.objects.filter(post__slug=slug).select_related('user')
         return context
 
     def get(self, request, *args, **kwargs):
@@ -110,3 +112,16 @@ class PostDeleteView(IsAuthorOrAdminMixin, generic.DeleteView):
         return reverse_lazy('post:post-list', kwargs={
             'category_slug': post.category.slug
         })
+
+
+class LikeView(LoginRequiredMixin, AjaxResponseMixin, JSONResponseMixin, generic.FormView):
+    http_method_names = ('post',)
+    slug_url_kwarg = 'post_slug'
+    login_url = reverse_lazy('account:login')
+
+    def post_ajax(self, request, *args, **kwargs):
+        post = Post.objects.get(slug=self.kwargs[self.slug_url_kwarg])
+        like, like_bool = Like.objects.get_or_create(user=request.user, post=post)
+        if not like_bool:
+            like.delete()
+        return self.render_json_response({"likes": post.like.count()})

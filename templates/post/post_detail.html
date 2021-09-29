@@ -1,11 +1,13 @@
 {% extends 'layouts/base.html' %}
 
+{% load static %}
+
 {% block content %}
 <div class="post">
     <h3>{{post.title}}</h3>
     <p>{{post.body}}</p>
     <p>{{post.author }} > {{post.created}}</p>
-
+    <p><button value="{{post.get_absolute_url_to_like}}" name="postLike">Like</button> -> {{post.like.count}}</p>
     <br>
     <div class="commentForm">
         {% csrf_token %}
@@ -28,7 +30,7 @@
 <script type="text/javascript">
     const url = document.URL;
 
-    document.getElementById('commentForm').addEventListener('submit', function () {
+    document.getElementById('submit').addEventListener('click', function () {
         let comment = document.getElementById('id_text').value;
         let csrf = document.getElementsByName('csrfmiddlewaretoken');
         let csrfValue = csrf[0].value;
@@ -50,4 +52,6 @@
         });
     });
 </script>
+<script type="text/javascript"
+        src="{% static 'js/like.js' %}"></script>
 {% endblock javascript %}
