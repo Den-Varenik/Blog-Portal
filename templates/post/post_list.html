@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load static %}
+
 {% block content %}
 <div class="container">
     {% for post in posts %}
@@ -8,6 +10,7 @@
         <p>{{post.body}}</p>
         <a href="{{post.get_absolute_url}}">Details</a>
         <p>{{post.author }} > {{post.created}}</p>
+        <p><button value="{{post.get_absolute_url_to_like}}" name="postLike">Likes</button> -> {{post.like.count}}</p>
     </div>
     {% endfor %}
 
@@ -30,3 +33,8 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript"
+        src="{% static 'js/like.js' %}"></script>
+{% endblock javascript %}
