@@ -11,8 +11,10 @@ class PostTestCases(TestCase):
         self.user = User.objects.create_user(username="test",
                                              email="test@example.com",
                                              password="Test@123")
+        self.author = models.Author.objects.create(user=self.user,
+                                                   alias="Pretty Monkey")
         self.category = models.Category.objects.create(name="coding", slug="code")
-        self.post = models.Post.objects.create(author=self.user,
+        self.post = models.Post.objects.create(author=self.author,
                                                title="All about Python3.9",
                                                slug="info-python3.9",
                                                body="Lorem ipsum",
