@@ -9,7 +9,7 @@ class TestPostUrls(SimpleTestCase):
         self.url = 'post:'
 
     def test_post_detail(self):
-        url = reverse(self.url + 'post-detail', args=['category_slug', 'post_slug'])
+        url = reverse(self.url + 'post-detail', args=['post_slug'])
         self.assertEquals(resolve(url).func.view_class, views.PostDetailView)
 
     def test_post_create(self):
@@ -24,7 +24,7 @@ class TestPostUrls(SimpleTestCase):
         url = reverse(self.url + 'post-delete', args=['post_slug'])
         self.assertEquals(resolve(url).func.view_class, views.PostDeleteView)
 
-    def test_category_list(self):
-        url = reverse(self.url + 'post-list', args=['category_slug'])
-        self.assertEquals(resolve(url).func.view_class, views.PostListView)
+    # def test_category_list(self):
+    #     url = reverse(self.url + 'post-list', args=['category_slug'])
+    #     self.assertEquals(resolve(url).func.view_class, views.PostListView)
 

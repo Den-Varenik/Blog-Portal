@@ -9,7 +9,7 @@ class IsAuthorOrAdminMixin(AccessMixin):
         obj = self.model.objects.get(slug=slug)
         if request.user != obj.author or not request.user.is_staff:
             if request.user.is_authenticated:
-                return redirect('home:index')
+                return redirect('home:category-list')
             else:
                 return redirect('account:login')
         return super().dispatch(request, *args, **kwargs)

@@ -1,6 +1,7 @@
-from home.views import index
 from django.conf.urls import url
+from home import views
 
 urlpatterns = [
-    url('^$', index, name="index"),
+    url(r'^$', views.CategoryListView.as_view(), name="category-list"),
+    url(r'^follow/(?P<category_slug>.+)/$', views.PostListView.as_view(), name="post-list"),
 ]
