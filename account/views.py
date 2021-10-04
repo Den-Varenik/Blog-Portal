@@ -16,7 +16,7 @@ class UserCreateView(generic.CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('home:index')
+        return redirect('home:category-list')
 
 
 class UserLoginView(LoginView):
@@ -24,7 +24,7 @@ class UserLoginView(LoginView):
     template_name = 'account/user_form.html'
 
     def get_success_url(self):
-        return reverse_lazy("home:index")
+        return reverse_lazy("home:category-list")
 
 
 @login_required

@@ -17,7 +17,7 @@ class RegisterTestCase(TestCase):
         }
         response = self.client.post(reverse(self.url + 'register'), data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('home:index'))
+        self.assertEqual(response.url, reverse('home:category-list'))
         self.assertEqual(User.objects.all().count(), 1)
 
 
@@ -36,7 +36,7 @@ class LoginLogoutTestCase(TestCase):
         }
         response = self.client.post(reverse(self.url + "login"), data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('home:index'))
+        self.assertEqual(response.url, reverse('home:category-list'))
 
     def test_logout(self):
         self.client.force_login(self.user)

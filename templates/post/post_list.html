@@ -2,8 +2,11 @@
 
 {% load static %}
 
+{% block title %}{{ title }}{% endblock title %}
+
 {% block content %}
 <div class="container">
+    <h2>{{ category|title }}</h2>
     {% for post in posts %}
     <div class="post">
         <h3>{{post.title}}</h3>

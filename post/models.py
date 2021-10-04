@@ -26,7 +26,7 @@ class Category(models.Model):
         return str(self.name)
 
     def get_absolute_url(self) -> str:
-        return reverse('post:post-list', args=[self.slug])
+        return reverse('home:post-list', args=[self.slug])
 
 
 class Post(models.Model):
@@ -34,7 +34,7 @@ class Post(models.Model):
     title = models.CharField(_("Title"), max_length=50)
     slug = models.SlugField(_("Slug"), unique=True)
     body = models.TextField(_("Text"))
-    category = models.ForeignKey(Category, related_name="post", on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name="posts", on_delete=models.CASCADE)
     img = models.FileField(upload_to="post_img/", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -48,7 +48,7 @@ class Post(models.Model):
         return str(self.title)
 
     def get_absolute_url(self) -> str:
-        return reverse('post:post-detail', args=[self.category.slug, self.slug])
+        return reverse('post:post-detail', args=[self.slug])
 
     def get_absolute_url_to_like(self) -> str:
         return reverse('post:post-like',  args=[self.slug])
